@@ -55,3 +55,67 @@ test('dont swallow errors', () => {
     }
   ])
 })
+
+describe('React.children', () => {
+  test('count', () => {
+    let countOfChildren = null
+
+    const ExampleChildComponent = () => <div>hi :D</div>
+    ExampleChildComponent.whyDidYouRender = true
+
+    const ExampleComponent = ({children}) => {
+      countOfChildren = React.Children.count(children)
+      return (
+        <div>
+          {children}
+        </div>
+      )
+    }
+
+    ExampleComponent.whyDidYouRender = true
+
+    rtl.render(
+      <ExampleComponent>
+        <ExampleChildComponent>child_1</ExampleChildComponent>
+        <ExampleChildComponent>child_2</ExampleChildComponent>
+        <ExampleChildComponent>child_3</ExampleChildComponent>
+      </ExampleComponent>
+    )
+
+    expect(countOfChildren).toBe(3)
+  })
+
+  test('children types', () => {
+    let childrenTypes = null
+    const ExampleChildComponent = () => <div>hi :D</div>
+
+    ExampleChildComponent.whyDidYouRender = true
+
+    const ExampleComponent = ({children}) => {
+      childrenTypes = React.Children.map(children, child => {
+        return child.type
+      })
+      return (
+        <div>
+          {children}
+        </div>
+      )
+    }
+
+    ExampleComponent.whyDidYouRender = true
+
+    rtl.render(
+      <ExampleComponent>
+        <ExampleChildComponent>child_1</ExampleChildComponent>
+        <ExampleChildComponent>child_2</ExampleChildComponent>
+        <ExampleChildComponent>child_3</ExampleChildComponent>
+      </ExampleComponent>
+    )
+
+    expect(childrenTypes).toEqual([
+      ExampleChildComponent,
+      ExampleChildComponent,
+      ExampleChildComponent
+    ])
+  })
+})
